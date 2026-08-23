@@ -1,6 +1,6 @@
 # SMS Backup Viewer
 
-Quick SMS Backup and Restore Viewer reader I cooked up in an hour to view and convert the backups. 97% Claude as I only had to fix a few bits of bad code. Use it if you need it. 
+Quick SMS Backup and Restore Viewer/Converter I cooked up in an hour to view and convert the backups. 97% Claude as I only had to fix a few bits of bad code. Use it if you need it. 
 
 **Read your text messages on your computer. Save your photos. Print your conversations.**
 
