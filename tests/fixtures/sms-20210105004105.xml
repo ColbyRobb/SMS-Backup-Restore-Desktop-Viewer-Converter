@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<smses count="3" backup_date="1609814465000" type="full">
+  <sms protocol="0" address="+1 555-867-5309" date="1609459200000" type="1" subject="null" body="Old era message" toa="null" sc_toa="null" service_center="+15550000001" read="1" status="-1" locked="0" sub_id="1" readable_date="1 Jan 2021 00:00:00" contact_name="Alex Rivera" />
+  <sms protocol="0" address="5558675309" date="1609462800000" type="2" subject="null" body="Reply from 2021" toa="null" sc_toa="null" service_center="null" read="1" status="0" locked="0" sub_id="1" readable_date="1 Jan 2021 01:00:00" contact_name="Alex Rivera" />
+  <mms address="+15558675309" date="1609466400000" msg_box="1" m_type="132" ct_t="application/vnd.wap.multipart.related" read="1" sub_id="1" readable_date="1 Jan 2021 02:00:00" contact_name="Alex Rivera">
+    <parts>
+      <part seq="-1" ct="application/smil" name="smil.xml" chset="null" cl="smil.xml" text="&lt;smil&gt;&lt;/smil&gt;" />
+      <part seq="0" ct="image/jpeg" name="photo.jpg" chset="null" cl="photo.jpg" text="null" data="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" />
+      <part seq="1" ct="text/plain" name="text.txt" chset="106" cl="text.txt" text="Photo from 2021" />
+    </parts>
+    <addrs>
+      <addr address="+15558675309" type="137" charset="106" />
+      <addr address="insert-address-token" type="151" charset="106" />
+    </addrs>
+  </mms>
+</smses>

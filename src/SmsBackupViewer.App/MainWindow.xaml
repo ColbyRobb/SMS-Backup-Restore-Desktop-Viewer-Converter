@@ -1,0 +1,282 @@
+<Window x:Class="SmsBackupViewer.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:SmsBackupViewer.App"
+        xmlns:vm="clr-namespace:SmsBackupViewer.App.ViewModels"
+        Title="SMS Backup Viewer" Height="860" Width="1400"
+        Background="{StaticResource SurfaceBrush}"
+        FontFamily="{StaticResource BodyFont}"
+        AllowDrop="True" Drop="OnDrop" DragOver="OnDragOver">
+
+    <Window.Resources>
+        <local:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis"/>
+        <local:InverseBoolConverter x:Key="NotLoading"/>
+        <local:OutgoingAlignmentConverter x:Key="Align"/>
+        <local:OutgoingBrushConverter x:Key="BubbleFill"/>
+        <local:OutgoingBorderConverter x:Key="BubbleBorder"/>
+        <local:MediaPathToImageConverter x:Key="MediaImage"/>
+        <local:ImageAvailableConverter x:Key="ImageAvailable"/>
+
+        <!-- One attachment inside a bubble -->
+        <DataTemplate x:Key="AttachmentTemplate">
+            <Border Margin="0,6,0,0" Padding="8" CornerRadius="3"
+                    Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                <StackPanel>
+                    <Image Source="{Binding MediaPath, Converter={StaticResource MediaImage}}"
+                           Visibility="{Binding MediaPath, Converter={StaticResource ImageAvailable}}"
+                           MaxWidth="420" MaxHeight="420" Stretch="Uniform"
+                           HorizontalAlignment="Left" Margin="0,0,0,6"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                   MaxWidth="280"/>
+                        <TextBlock Text="{Binding ContentType, StringFormat=' • {0}'}"
+                                   Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!-- One record in the transcript -->
+        <DataTemplate x:Key="MessageTemplate" DataType="{x:Type vm:RecordViewModel}">
+            <Grid Margin="10,3">
+                <!-- Calls and system notes are centred markers, not bubbles -->
+                <Border Visibility="{Binding IsCall, Converter={StaticResource BoolToVis}}"
+                        HorizontalAlignment="Center" Padding="10,5" CornerRadius="10"
+                        Background="{StaticResource HeaderFill}"
+                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding BodyText}" FontWeight="SemiBold" FontSize="12"/>
+                        <TextBlock Text="{Binding ShortTimeText, StringFormat='  •  {0}'}"
+                                   Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Visibility="{Binding IsCall, Converter={StaticResource InverseBoolToVis}}"
+                        MaxWidth="640"
+                        HorizontalAlignment="{Binding IsOutgoing, Converter={StaticResource Align}}"
+                        Background="{Binding IsOutgoing, Converter={StaticResource BubbleFill}}"
+                        BorderBrush="{Binding IsOutgoing, Converter={StaticResource BubbleBorder}}"
+                        BorderThickness="1" CornerRadius="8" Padding="11,8">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                            <TextBlock Text="{Binding SenderText}" FontWeight="SemiBold" FontSize="12"/>
+                            <TextBlock Text="{Binding DirectionText, StringFormat='  •  {0}'}"
+                                       Style="{StaticResource Muted}"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding BodyText}" TextWrapping="Wrap"
+                                   Visibility="{Binding HasBodyText, Converter={StaticResource BoolToVis}}"/>
+
+                        <ItemsControl ItemsSource="{Binding Attachments}"
+                                      ItemTemplate="{StaticResource AttachmentTemplate}"
+                                      Visibility="{Binding HasAttachments, Converter={StaticResource BoolToVis}}"/>
+
+                        <TextBlock Text="{Binding TimeText}" Style="{StaticResource Muted}" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title bar -->
+        <Border Grid.Row="0" Background="{StaticResource HeaderFill}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="16,11">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="SMS Backup Viewer" Style="{StaticResource Heading}"/>
+                    <TextBlock Text="Everything stays on this computer. No data is ever sent anywhere."
+                               Style="{StaticResource Muted}" Margin="0,2,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <CheckBox Content="Load images and media" IsChecked="{Binding LoadMedia}"
+                              IsEnabled="{Binding IsLoading, Converter={StaticResource NotLoading}}"
+                              VerticalAlignment="Center"/>
+                    <Button Content="Open backup…" Command="{Binding OpenFileCommand}"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource NotLoading}}"/>
+                    <Button Content="Extract media…" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
+                            Click="OnExtractMedia"
+                            ToolTip="Pull photos, video and other attachments out of a folder of backups"/>
+                    <Button Content="Export PDF…" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
+                            Click="OnExportPdf"
+                            ToolTip="Print conversations as message bubbles, with attachments saved alongside"/>
+                    <Button Content="Cancel" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
+                            Command="{Binding CancelCommand}"
+                            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"/>
+                    <Button Content="Close" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
+                            Command="{Binding CloseFileCommand}"
+                            Visibility="{Binding IsLoading, Converter={StaticResource InverseBoolToVis}}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Filters -->
+        <Border Grid.Row="1" Background="White" BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1" Padding="16,9">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Search messages" Style="{StaticResource SubHeading}" VerticalAlignment="Center"/>
+                <TextBox Width="230" Margin="8,0,18,0"
+                         Text="{Binding MessageFilter, UpdateSourceTrigger=PropertyChanged, Delay=250}"/>
+
+                <TextBlock Text="From" Style="{StaticResource SubHeading}" VerticalAlignment="Center"/>
+                <DatePicker SelectedDate="{Binding StartDate}" Width="130" Margin="8,0,12,0"/>
+                <TextBlock Text="To" Style="{StaticResource SubHeading}" VerticalAlignment="Center"/>
+                <DatePicker SelectedDate="{Binding EndDate}" Width="130" Margin="8,0,18,0"/>
+
+                <CheckBox Content="SMS" IsChecked="{Binding ShowSms}"/>
+                <CheckBox Content="MMS" IsChecked="{Binding ShowMms}"/>
+                <CheckBox Content="Calls" IsChecked="{Binding ShowCalls}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main content -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="330" MinWidth="240"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" MinWidth="360"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="380" MinWidth="260"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Conversations -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Padding="12,9" Background="White"
+                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+                    <StackPanel>
+                        <TextBlock Text="Conversations" Style="{StaticResource SubHeading}"/>
+                        <TextBox Margin="0,6,0,0"
+                                 Text="{Binding ConversationFilter, UpdateSourceTrigger=PropertyChanged, Delay=200}"
+                                 ToolTip="Filter by name or number"/>
+                    </StackPanel>
+                </Border>
+                <ListBox Grid.Row="1" ItemsSource="{Binding ConversationsView}"
+                         SelectedItem="{Binding SelectedConversation}"
+                         ItemContainerStyle="{StaticResource ConversationItem}"
+                         BorderThickness="0" HorizontalContentAlignment="Stretch"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:ConversationViewModel}">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding DisplayName}" FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding LastDateText}" Style="{StaticResource Muted}"/>
+                                </Grid>
+                                <TextBlock Text="{Binding AddressText}" Style="{StaticResource Muted}"
+                                           TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding CountsText}" Style="{StaticResource Muted}" Margin="0,1,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+
+            <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Stretch"
+                          Background="{StaticResource BorderBrush}"/>
+
+            <!-- Transcript -->
+            <Grid Grid.Column="2" Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Padding="14,9" Background="White"
+                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+                    <StackPanel>
+                        <TextBlock Text="{Binding SelectedConversation.DisplayName}" Style="{StaticResource Heading}"/>
+                        <TextBlock Text="{Binding SelectedConversation.AddressText}" Style="{StaticResource Muted}"/>
+                    </StackPanel>
+                </Border>
+                <ListBox Grid.Row="1" ItemsSource="{Binding Messages}"
+                         SelectedItem="{Binding SelectedRecord}"
+                         ItemTemplate="{StaticResource MessageTemplate}"
+                         ItemContainerStyle="{StaticResource MessageItem}"
+                         BorderThickness="0" HorizontalContentAlignment="Stretch"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling"
+                         VirtualizingPanel.ScrollUnit="Pixel"/>
+            </Grid>
+
+            <GridSplitter Grid.Column="3" Width="4" HorizontalAlignment="Stretch"
+                          Background="{StaticResource BorderBrush}"/>
+
+            <!-- Record inspector -->
+            <Grid Grid.Column="4" Background="{StaticResource HeaderFill}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Padding="12,9" Background="{StaticResource HeaderFill}"
+                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+                    <StackPanel>
+                        <TextBlock Text="Record details" Style="{StaticResource SubHeading}"/>
+                        <TextBlock Text="Every attribute stored in the backup for the selected record."
+                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="12,8">
+                    <ItemsControl ItemsSource="{Binding SelectedRecord.Details}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:DetailRow}">
+                                <Grid Margin="0,1">
+                                    <!-- Section header -->
+                                    <TextBlock Text="{Binding Name}" Style="{StaticResource SubHeading}"
+                                               Margin="0,10,0,4"
+                                               Visibility="{Binding IsHeader, Converter={StaticResource BoolToVis}}"/>
+                                    <!-- Name / value pair -->
+                                    <Grid Visibility="{Binding IsHeader, Converter={StaticResource InverseBoolToVis}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="132"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{StaticResource Muted}"
+                                                   TextWrapping="Wrap" VerticalAlignment="Top"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Value}" TextWrapping="Wrap"
+                                                   FontSize="12" VerticalAlignment="Top"/>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- Status bar -->
+        <Border Grid.Row="3" Background="{StaticResource HeaderFill}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="16,8">
+            <StackPanel>
+                <ProgressBar Value="{Binding Progress}" Maximum="100" Margin="0,0,0,6"
+                             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"/>
+                <TextBlock Text="{Binding StatusText}"/>
+                <TextBlock Text="{Binding FileSummary}" Style="{StaticResource Muted}" Margin="0,2,0,0"/>
+                <TextBlock Text="{Binding ProvenanceText}" Style="{StaticResource Muted}" Margin="0,2,0,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

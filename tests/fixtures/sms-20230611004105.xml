@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<smses count="6" backup_set="8f3a1b22-0c4d-4e5f-9a10-2b3c4d5e6f70" backup_date="1686444065000" type="full">
+  <sms protocol="0" address="+1 555-867-5309" date="1609459200000" type="1" subject="null" body="Hey, are we still on for tomorrow?" toa="null" sc_toa="null" service_center="+15550000001" read="1" status="-1" locked="0" sub_id="1" readable_date="1 Jan 2021 00:00:00" contact_name="Alex Rivera" />
+  <sms protocol="0" address="5558675309" date="1609462800000" type="2" subject="null" body="Yes! See you at 10 &#128512;" toa="null" sc_toa="null" service_center="null" read="1" status="0" locked="0" sub_id="1" readable_date="1 Jan 2021 01:00:00" contact_name="Alex Rivera" />
+  <sms protocol="0" address="+61 400 111 222" date="1612137600000" type="5" subject="null" body="Message failed to send" toa="null" sc_toa="null" service_center="null" read="1" status="64" locked="0" sub_id="2" carrier_tag="telstra" readable_date="1 Feb 2021 00:00:00" contact_name="(Unknown)" />
+  <mms address="+15558675309~+15551234567" date="1614556800000" date_sent="0" msg_box="1" m_type="132" ct_t="application/vnd.wap.multipart.related" read="1" sub_id="1" seen="1" text_only="0" thread_id="42" readable_date="1 Mar 2021 00:00:00" contact_name="Alex Rivera, Sam Chen">
+    <parts>
+      <part seq="-1" ct="application/smil" name="smil.xml" chset="null" cd="null" fn="null" cid="&lt;smil&gt;" cl="smil.xml" ctt_s="null" ctt_t="null" text="&lt;smil&gt;&lt;/smil&gt;" />
+      <part seq="0" ct="image/jpeg" name="photo.jpg" chset="null" cd="null" fn="null" cid="&lt;photo&gt;" cl="photo.jpg" ctt_s="null" ctt_t="null" text="null" data="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" />
+      <part seq="1" ct="text/plain" name="text.txt" chset="106" cd="null" fn="null" cid="&lt;text&gt;" cl="text.txt" ctt_s="null" ctt_t="null" text="Look at this photo" />
+    </parts>
+    <addrs>
+      <addr address="+15558675309" type="137" charset="106" />
+      <addr address="+15551234567" type="151" charset="106" />
+      <addr address="insert-address-token" type="151" charset="106" />
+    </addrs>
+  </mms>
+  <mms address="99887766@rcs.google.com" date="1617235200000" date_sent="0" msg_box="1" m_type="132" ct_t="application/vnd.wap.multipart.related" read="1" sub_id="1" readable_date="1 Apr 2021 00:00:00" contact_name="Sam Chen">
+    <parts>
+      <part seq="0" ct="text/plain" name="text.txt" chset="106" cl="text.txt" text="Sent over RCS" />
+      <part seq="1" ct="video/mp4" name="clip.mp4" chset="null" cl="clip.mp4" text="null" data="AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDE=" />
+    </parts>
+    <addrs>
+      <addr address="+15551234567" type="137" charset="106" />
+      <addr address="insert-address-token" type="151" charset="106" />
+    </addrs>
+  </mms>
+  <mms address="+15558675309" date="1619827200000" msg_box="1" m_type="134" ct_t="application/vnd.wap.multipart.related" read="1" sub_id="1" readable_date="1 May 2021 00:00:00" contact_name="Alex Rivera">
+    <parts />
+    <addrs>
+      <addr address="+15558675309" type="137" charset="106" />
+    </addrs>
+  </mms>
+</smses>

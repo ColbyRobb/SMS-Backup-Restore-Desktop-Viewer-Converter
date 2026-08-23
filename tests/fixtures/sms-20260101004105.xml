@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<smses count="4" backup_set="9a4b2c33-1d5e-4f60-8b21-3c4d5e6f7081" backup_date="1767225665000" type="full">
+  <sms protocol="0" address="+1 555-867-5309" date="1750000000000" type="1" subject="null" body="Modern era message" toa="null" sc_toa="null" read="1" status="-1" locked="0" sub_id="1" sim_slot="0" carrier_tag="telstra" readable_date="15 Jun 2025 00:00:00" contact_name="Alex Rivera" />
+  <sms protocol="0" address="+15558675309" date="1750003600000" type="6" subject="null" body="Queued message never sent" toa="null" sc_toa="null" read="1" status="32" locked="0" sub_id="1" sim_slot="0" carrier_tag="telstra" readable_date="15 Jun 2025 01:00:00" contact_name="Alex Rivera" />
+  <mms address="99887766@rcs.google.com" date="1750007200000" date_sent="0" msg_box="1" m_type="132" ct_t="application/vnd.wap.multipart.related" read="1" sub_id="1" seen="1" text_only="0" thread_id="87" sim_slot="0" readable_date="15 Jun 2025 02:00:00" contact_name="Sam Chen">
+    <parts>
+      <part seq="0" ct="text/plain" name="text.txt" chset="106" cl="text.txt" text="Modern RCS message &#128512;" />
+      <part seq="1" ct="image/webp" name="sticker.webp" chset="null" cl="sticker.webp" text="null" data="UklGRiIAAABXRUJQVlA4TBUAAAAvAAAAAAfQ//73v/+BiOh/AAA=" />
+    </parts>
+    <addrs>
+      <addr address="+15551234567" type="137" charset="106" />
+      <addr address="insert-address-token" type="151" charset="106" />
+    </addrs>
+  </mms>
+  <mms address="+15558675309~+15551234567" date="1750010800000" date_sent="0" msg_box="2" m_type="128" ct_t="application/vnd.wap.multipart.related" read="1" sub_id="1" seen="1" text_only="1" thread_id="88" sim_slot="0" readable_date="15 Jun 2025 03:00:00" contact_name="Alex Rivera, Sam Chen">
+    <parts>
+      <part seq="0" ct="text/plain" name="text.txt" chset="106" cl="text.txt" text="Group reply" />
+    </parts>
+    <addrs>
+      <addr address="insert-address-token" type="137" charset="106" />
+      <addr address="+15558675309" type="151" charset="106" />
+      <addr address="+15551234567" type="151" charset="106" />
+    </addrs>
+  </mms>
+</smses>

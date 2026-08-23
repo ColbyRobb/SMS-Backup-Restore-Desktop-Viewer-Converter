@@ -1,0 +1,189 @@
+<Window x:Class="SmsBackupViewer.App.ExtractWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:SmsBackupViewer.App"
+        xmlns:vm="clr-namespace:SmsBackupViewer.App.ViewModels"
+        Title="Extract media" Height="760" Width="900"
+        MinHeight="600" MinWidth="720"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource SurfaceBrush}"
+        FontFamily="{StaticResource BodyFont}">
+
+    <Window.Resources>
+        <local:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <local:InverseBoolConverter x:Key="NotBusy"/>
+        <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis"/>
+    </Window.Resources>
+
+    <Grid Margin="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="{StaticResource HeaderFill}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="18,13">
+            <StackPanel>
+                <TextBlock Text="Extract media" Style="{StaticResource Heading}"/>
+                <TextBlock Text="Pull photos, video and other attachments out of a folder of backups. Everything is written to your computer only."
+                           Style="{StaticResource Muted}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Folders and options -->
+        <Border Grid.Row="1" Padding="18,14" Background="White"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <Grid IsEnabled="{Binding IsBusy, Converter={StaticResource NotBusy}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Backups folder" Style="{StaticResource SubHeading}"
+                           VerticalAlignment="Center"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SourceFolder, UpdateSourceTrigger=PropertyChanged, Delay=400}"
+                         Margin="0,0,8,0"/>
+                <Button Grid.Row="0" Grid.Column="2" Content="Browse…" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding BrowseSourceCommand}"/>
+
+                <CheckBox Grid.Row="1" Grid.Column="1" Content="Include subfolders"
+                          IsChecked="{Binding IncludeSubfolders}" Margin="0,7,0,0"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Save to" Style="{StaticResource SubHeading}"
+                           VerticalAlignment="Center" Margin="0,12,0,0"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding OutputFolder, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,12,8,0"/>
+                <Button Grid.Row="2" Grid.Column="2" Content="Browse…" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding BrowseOutputCommand}" Margin="0,12,0,0"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Include" Style="{StaticResource SubHeading}"
+                           VerticalAlignment="Center" Margin="0,14,0,0"/>
+                <StackPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,14,0,0">
+                    <RadioButton Content="Images only" GroupName="Kind" IsChecked="{Binding ImagesOnly}"
+                                 Margin="0,0,16,0" VerticalContentAlignment="Center"/>
+                    <RadioButton Content="Images, video and audio" GroupName="Kind" IsChecked="{Binding AllMedia}"
+                                 Margin="0,0,16,0" VerticalContentAlignment="Center"/>
+                    <RadioButton Content="Every attachment" GroupName="Kind" IsChecked="{Binding AllAttachments}"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Also vCards, documents and anything else the backup carried"/>
+                </StackPanel>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Between" Style="{StaticResource SubHeading}"
+                           VerticalAlignment="Center" Margin="0,14,0,0"/>
+                <StackPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,14,0,0">
+                    <DatePicker SelectedDate="{Binding StartDate}" Width="130"/>
+                    <TextBlock Text="and" Style="{StaticResource Muted}" VerticalAlignment="Center" Margin="8,0"/>
+                    <DatePicker SelectedDate="{Binding EndDate}" Width="130"/>
+                    <TextBlock Text="(leave empty for everything)" Style="{StaticResource Muted}"
+                               VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    <CheckBox Content="Folder per contact" IsChecked="{Binding FolderPerContact}" Margin="20,0,0,0"/>
+                    <CheckBox Content="Skip files already saved" IsChecked="{Binding Resume}"
+                              ToolTip="Lets an interrupted run carry on where it stopped"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Contacts -->
+        <Grid Grid.Row="2" Margin="18,14,18,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <CheckBox Content="Every conversation" IsChecked="{Binding EveryConversation}"
+                          FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <Button Content="Scan for contacts" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding ScanCommand}" Margin="12,0,0,0"/>
+                <Button Content="All" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
+                        Command="{Binding SelectAllCommand}"
+                        Visibility="{Binding HasScanned, Converter={StaticResource BoolToVis}}"/>
+                <Button Content="None" Style="{StaticResource SecondaryButton}" Margin="6,0,0,0"
+                        Command="{Binding SelectNoneCommand}"
+                        Visibility="{Binding HasScanned, Converter={StaticResource BoolToVis}}"/>
+                <TextBlock Text="or type names / numbers:" Style="{StaticResource Muted}"
+                           VerticalAlignment="Center" Margin="18,0,8,0"/>
+                <TextBox Width="220" Text="{Binding ContactFilter, UpdateSourceTrigger=PropertyChanged, Delay=300}"
+                         ToolTip="Separate several with commas. Numbers match in any formatting."/>
+            </StackPanel>
+
+            <Border Grid.Row="1" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                <Grid>
+                    <TextBlock Text="Scan for contacts to choose individual conversations, or leave &quot;Every conversation&quot; ticked to take them all."
+                               Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="16"
+                               VerticalAlignment="Top"
+                               Visibility="{Binding HasScanned, Converter={StaticResource InverseBoolToVis}}"/>
+
+                    <ListBox ItemsSource="{Binding Contacts}" BorderThickness="0"
+                             HorizontalContentAlignment="Stretch"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             VirtualizingPanel.IsVirtualizing="True"
+                             VirtualizingPanel.VirtualizationMode="Recycling"
+                             Visibility="{Binding HasScanned, Converter={StaticResource BoolToVis}}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="10,7"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:ContactChoice}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" Margin="0,0,10,0"
+                                              VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Label}" TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding RangeText}" Style="{StaticResource Muted}"
+                                               VerticalAlignment="Center" Margin="10,0"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding CountsText}" FontWeight="SemiBold"
+                                               FontSize="12" VerticalAlignment="Center" MinWidth="110"
+                                               TextAlignment="Right"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Progress and actions -->
+        <Border Grid.Row="3" Background="{StaticResource HeaderFill}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="18,12">
+            <StackPanel>
+                <ProgressBar Value="{Binding Progress}" Maximum="100" Margin="0,0,0,8"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding ResultText}" Style="{StaticResource Muted}" Margin="0,6,0,0"
+                           TextWrapping="Wrap"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                    <Button Content="Open folder" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding OpenOutputFolderCommand}" Margin="0,0,8,0"/>
+                    <Button Content="Cancel" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding CancelCommand}" Margin="0,0,8,0"
+                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                    <Button Content="Close" Style="{StaticResource SecondaryButton}" Click="OnClose"
+                            Margin="0,0,8,0"/>
+                    <Button Content="Extract" Command="{Binding ExtractCommand}" MinWidth="110"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

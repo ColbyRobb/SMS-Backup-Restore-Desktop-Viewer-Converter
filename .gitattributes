@@ -1,0 +1,16 @@
+# Normalise line endings so the CRLF warnings stop and diffs stay clean.
+* text=auto
+
+*.cs      text diff=csharp
+*.xaml    text
+*.csproj  text
+*.slnx    text
+*.md      text
+*.xml     text
+*.json    text
+
+# Binary assets
+*.ttf     binary
+*.png     binary
+*.jpg     binary
+*.pdf     binary

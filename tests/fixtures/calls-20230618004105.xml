@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<calls count="5" backup_set="8f3a1b22-0c4d-4e5f-9a10-2b3c4d5e6f70" backup_date="1687048865000" type="full">
+  <call number="+1 555-867-5309" duration="125" date="1609459200000" type="1" presentation="1" subscription_id="0" post_dial_digits="" readable_date="1 Jan 2021 00:00:00" contact_name="Alex Rivera" />
+  <call number="5558675309" duration="0" date="1609545600000" type="3" presentation="1" subscription_id="0" readable_date="2 Jan 2021 00:00:00" contact_name="Alex Rivera" />
+  <call number="+61 400 111 222" duration="42" date="1612137600000" type="2" presentation="1" subscription_id="1" readable_date="1 Feb 2021 00:00:00" contact_name="(Unknown)" />
+  <call number="" duration="0" date="1614556800000" type="3" presentation="2" subscription_id="0" readable_date="1 Mar 2021 00:00:00" contact_name="(Unknown)" />
+  <call number="+15551234567" duration="900" date="1687000000000" type="4" presentation="1" subscription_id="0" sim_display_name="SIM 1" readable_date="17 Jun 2023 00:00:00" contact_name="Sam Chen" />
+</calls>

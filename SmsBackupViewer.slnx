@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SmsBackupViewer.App/SmsBackupViewer.App.csproj" />
+    <Project Path="src/SmsBackupViewer.Core/SmsBackupViewer.Core.csproj" />
+    <Project Path="src/SmsBackupViewer.Pdf/SmsBackupViewer.Pdf.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SmsBackupViewer.Core.Tests/SmsBackupViewer.Core.Tests.csproj" />
+  </Folder>
+</Solution>
