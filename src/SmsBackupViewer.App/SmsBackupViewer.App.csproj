@@ -15,6 +15,13 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+
+    <Version>1.0.0</Version>
+    <AssemblyTitle>SMS Backup Viewer</AssemblyTitle>
+    <Product>SMS Backup Viewer</Product>
+    <Company>PlexXoniC</Company>
+    <Description>Offline viewer for SMS Backup &amp; Restore XML backups</Description>
+    <Copyright>Copyright (c) 2026 PlexXoniC</Copyright>
   </PropertyGroup>
 
 
