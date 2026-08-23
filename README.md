@@ -161,8 +161,8 @@ there is no warranty.
 ## Credits
 
 Thanks to **SyncTech Support** for publishing the
-[XML field documentation](https://www.synctech.com.au/sms-backup-restore/fields-in-xml-backup-files/),
-for their help while this was being built, and for reviewing and approving the project.
+[XML field documentation](https://www.synctech.com.au/sms-backup-restore/fields-in-xml-backup-files/)
+and for their help while this was being built.
 
-This is an independent tool, not an official SyncTech product. Please don't send them support
-requests about it; open an issue [here](../../issues) instead.
+This is an independent tool. It is not an official SyncTech product and is not endorsed by them.
+Please don't send them support requests about it; open an issue [here](../../issues) instead.
