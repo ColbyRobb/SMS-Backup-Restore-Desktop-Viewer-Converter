@@ -14,8 +14,14 @@ There is no account, no sign-in, and no internet connection required.
 
 ## Getting started
 
-**1. Download it.** Get the latest version from the [Releases page](../../releases) and unzip it
-anywhere — your Desktop is fine.
+**1. Download it.** Get the latest version from the [Releases page](../../releases). There are two:
+
+| Download | Size | |
+|---|---|---|
+| **standalone** | 70 MB | Nothing else to install. **Pick this one.** |
+| **needs-dotnet** | 14 MB | Smaller, but you must install [.NET 10](https://dotnet.microsoft.com/download/dotnet/10.0) first. |
+
+Unzip it anywhere — your Desktop is fine.
 
 **2. Run `SmsBackupViewer.App.exe`.** There is no installer. If Windows shows a blue "Windows
 protected your PC" box, click **More info** then **Run anyway** — that appears for any program
@@ -27,12 +33,11 @@ backup app to use, or in your Google Drive or Dropbox folder.
 
 You can select more than one file at once, or drag files onto the window.
 
+Keep the files from the zip together in one folder.
+
 > **Using Google Drive, OneDrive or Dropbox?** Make sure the file is actually downloaded to your
 > PC first — right-click it and choose *Always keep on this device*. Files that exist only in the
 > cloud will fail to open, or take a very long time.
-
-You will need [.NET 10](https://dotnet.microsoft.com/download/dotnet/10.0) installed. Windows
-offers you the download link if it is missing.
 
 ---
 
@@ -125,10 +130,12 @@ dotnet test
 dotnet run --project src/SmsBackupViewer.App
 ```
 
-To produce the standalone executable:
+To produce the two release builds:
 
 ```
-dotnet publish src/SmsBackupViewer.App -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish
+dotnet publish src/SmsBackupViewer.App -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o publish/standalone
+
+dotnet publish src/SmsBackupViewer.App -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish/needs-dotnet
 ```
 
 | Project | What it is |
