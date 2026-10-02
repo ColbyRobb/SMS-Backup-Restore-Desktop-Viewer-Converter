@@ -54,6 +54,12 @@ together.
 
 Search for words, narrow to a date range, or hide calls to see only texts.
 
+Every search box accepts wildcards: `*` stands for any run of characters and `?` for exactly one.
+`pay*ment` finds "payment" and "pay the first installment", `b?t` finds "bat", "bet" and "bit",
+and `555-???-5309` finds any 555 number ending in 5309, however it was formatted. Type `\*` or
+`\?` to search for a literal star or question mark. A search without wildcards works as it always
+has, finding the words anywhere in the message.
+
 ### See absolutely everything
 
 Click any message and the panel on the right shows *every* piece of information your phone stored

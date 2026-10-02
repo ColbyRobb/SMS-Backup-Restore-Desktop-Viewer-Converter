@@ -115,7 +115,7 @@
                 <TextBlock Text="or type names / numbers:" Style="{StaticResource Muted}"
                            VerticalAlignment="Center" Margin="18,0,8,0"/>
                 <TextBox Width="220" Text="{Binding ContactFilter, UpdateSourceTrigger=PropertyChanged, Delay=300}"
-                         ToolTip="Separate several with commas. Numbers match in any formatting."/>
+                         ToolTip="Separate several with commas. Numbers match in any formatting. Wildcards: * matches any run of characters, ? matches one."/>
             </StackPanel>
 
             <Border Grid.Row="1" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">

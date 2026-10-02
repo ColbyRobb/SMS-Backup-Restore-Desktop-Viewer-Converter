@@ -56,6 +56,12 @@ public sealed partial class MainViewModel : ObservableObject
         if (item is not ConversationViewModel conversation) return false;
         if (string.IsNullOrWhiteSpace(ConversationFilter)) return true;
 
+        if (_conversationPattern is { HasWildcards: true } pattern)
+            return pattern.IsMatch(conversation.DisplayName)
+                || pattern.IsMatch(conversation.AddressText)
+                // Let "555-???-5309" match "+1 (555) 867-5309".
+                || _conversationNumberPattern!.IsMatch(AddressKey.StripFormatting(conversation.Conversation.DisplayAddress));
+
         var needle = ConversationFilter.Trim();
         return conversation.DisplayName.Contains(needle, StringComparison.OrdinalIgnoreCase)
             || conversation.AddressText.Contains(needle, StringComparison.OrdinalIgnoreCase)
@@ -63,7 +69,16 @@ public sealed partial class MainViewModel : ObservableObject
             || conversation.Key.Contains(AddressKey.Normalize(needle), StringComparison.OrdinalIgnoreCase);
     }
 
-    partial void OnConversationFilterChanged(string value) => ConversationsView.Refresh();
+    private SearchPattern? _conversationPattern;
+    private SearchPattern? _conversationNumberPattern;
+
+    partial void OnConversationFilterChanged(string value)
+    {
+        _conversationPattern = SearchPattern.Parse(value);
+        _conversationNumberPattern = SearchPattern.ParseNumber(value);
+        ConversationsView.Refresh();
+    }
+
     partial void OnSelectedConversationChanged(ConversationViewModel? value) => RebuildMessages();
     partial void OnMessageFilterChanged(string value) => RebuildMessages();
     partial void OnStartDateChanged(DateTime? value) => RebuildMessages();
@@ -220,7 +235,7 @@ public sealed partial class MainViewModel : ObservableObject
         var end = EndDate is { } to
             ? new DateTimeOffset(to.Date.AddDays(1).AddTicks(-1)).ToUnixTimeMilliseconds()
             : (long?)null;
-        var needle = MessageFilter.Trim();
+        var pattern = SearchPattern.Parse(MessageFilter);
 
         foreach (var record in SelectedConversation.Conversation.Records)
         {
@@ -235,9 +250,7 @@ public sealed partial class MainViewModel : ObservableObject
             if (start is { } s && record.DateMs > 0 && record.DateMs < s) continue;
             if (end is { } e && record.DateMs > 0 && record.DateMs > e) continue;
 
-            if (needle.Length > 0 &&
-                !record.Body.Contains(needle, StringComparison.OrdinalIgnoreCase) &&
-                !(record.ContactName?.Contains(needle, StringComparison.OrdinalIgnoreCase) ?? false))
+            if (pattern is not null && !pattern.IsMatch(record.Body) && !pattern.IsMatch(record.ContactName))
                 continue;
 
             Messages.Add(new RecordViewModel(record));

@@ -128,7 +128,8 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Search messages" Style="{StaticResource SubHeading}" VerticalAlignment="Center"/>
                 <TextBox Width="230" Margin="8,0,18,0"
-                         Text="{Binding MessageFilter, UpdateSourceTrigger=PropertyChanged, Delay=250}"/>
+                         Text="{Binding MessageFilter, UpdateSourceTrigger=PropertyChanged, Delay=250}"
+                         ToolTip="Wildcards: * matches any run of characters, ? matches one character. Use \* or \? for a literal * or ?."/>
 
                 <TextBlock Text="From" Style="{StaticResource SubHeading}" VerticalAlignment="Center"/>
                 <DatePicker SelectedDate="{Binding StartDate}" Width="130" Margin="8,0,12,0"/>
@@ -163,7 +164,7 @@
                         <TextBlock Text="Conversations" Style="{StaticResource SubHeading}"/>
                         <TextBox Margin="0,6,0,0"
                                  Text="{Binding ConversationFilter, UpdateSourceTrigger=PropertyChanged, Delay=200}"
-                                 ToolTip="Filter by name or number"/>
+                                 ToolTip="Filter by name or number. Wildcards: * matches any run of characters, ? matches one."/>
                     </StackPanel>
                 </Border>
                 <ListBox Grid.Row="1" ItemsSource="{Binding ConversationsView}"

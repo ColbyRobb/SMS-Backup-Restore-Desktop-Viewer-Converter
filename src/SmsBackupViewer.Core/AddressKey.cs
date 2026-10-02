@@ -29,6 +29,16 @@ public static class AddressKey
     }
 
     /// <summary>
+    /// Drops the spaces, dashes and brackets that <see cref="Normalize"/> ignores, but keeps the
+    /// whole number. Used for wildcard searches, which need every digit to match against.
+    /// </summary>
+    public static string StripFormatting(string? address)
+    {
+        if (string.IsNullOrEmpty(address)) return "";
+        return string.Concat(address.Where(c => c is not (' ' or '-' or '(' or ')')));
+    }
+
+    /// <summary>
     /// Builds the conversation key for an address, handling tilde-joined group threads.
     ///
     /// Participants are normalised individually and then sorted before being rejoined. The sort

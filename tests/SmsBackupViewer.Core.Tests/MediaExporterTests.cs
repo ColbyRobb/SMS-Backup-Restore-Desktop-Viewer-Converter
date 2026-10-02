@@ -78,6 +78,40 @@ public class ContactMatcherAndExportTests
     }
 
     [Fact]
+    public void MatchesNameWithWildcards()
+    {
+        var index = BuildIndex();
+        var matched = index.Conversations.Where(new ContactMatcher(["al?x*ra"]).Matches).ToList();
+        Assert.NotEmpty(matched);
+        Assert.Equal(
+            index.Conversations.Where(new ContactMatcher(["Alex Rivera"]).Matches).Select(c => c.Key).OrderBy(k => k),
+            matched.Select(c => c.Key).OrderBy(k => k));
+        Assert.DoesNotContain(index.Conversations, new ContactMatcher(["al?x*zzz"]).Matches);
+    }
+
+    [Fact]
+    public void MatchesNumberWithWildcardsRegardlessOfFormatting()
+    {
+        var index = BuildIndex();
+        var plain = index.Conversations.Where(new ContactMatcher(["5558675309"]).Matches).Select(c => c.Key);
+
+        var wildcard = index.Conversations.Where(new ContactMatcher(["(555) ???-5309"]).Matches).Select(c => c.Key);
+        Assert.Equal(plain.OrderBy(k => k), wildcard.OrderBy(k => k));
+
+        // The full number is compared, so a wrong area code rules a thread out.
+        Assert.DoesNotContain(index.Conversations, new ContactMatcher(["+1 999*5309"]).Matches);
+    }
+
+    [Fact]
+    public void WildcardAndPlainTermsCombine()
+    {
+        var index = BuildIndex();
+        var combined = index.Conversations.Where(new ContactMatcher(["sam*", "61 400 111 222"]).Matches).ToList();
+        Assert.Contains(combined, new ContactMatcher(["Sam Chen"]).Matches);
+        Assert.Contains(combined, new ContactMatcher(["61 400 111 222"]).Matches);
+    }
+
+    [Fact]
     public void NonMatchingTermFindsNothing()
         => Assert.DoesNotContain(BuildIndex().Conversations, new ContactMatcher(["Nobody At All"]).Matches);
 
